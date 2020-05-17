@@ -6,7 +6,7 @@
 
 void eval(int x, int y);
 
-int main(int argc, char *argv)
+int main(int argc, char *argv[])
 {
     int a = 0, b = 0;
     fprintf(stderr, "Input 2 Numbers: ");
