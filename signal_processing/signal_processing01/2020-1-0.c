@@ -19,7 +19,7 @@ void main()
 
 	for (int i = 0; i < 8000; i++)
 	{
-		fread(&dataln, sizeof(short), 1, ifp); // ファイルを読み出し
+		fread(&dataln, sizeof(short), 1, ifp); // ファイルを読み出し => 'dataln'に格納される
 		printf("%d\n", dataln);				   // データを出力
 	}
 
