@@ -13,11 +13,12 @@ cl 2019_3-1-5.c readWavHead.c
 by mokam@cis
 */
 
-#include<stdio.h>
-#include<math.h>
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
 
 /*こういう関数を使うよ、という宣言*/
-int readWavHead(FILE* fp, int* dataLength, unsigned long* fs, unsigned short* chNum, int* sampSize);
+int readWavHead(FILE *fp, int *dataLength, unsigned long *fs, unsigned short *chNum, int *sampSize);
 
 void main()
 {
@@ -26,12 +27,13 @@ void main()
 	int len, sampSize;
 	unsigned long fs;
 	unsigned short chNum;
-	/*変数の宣言で足りないものをこの辺に書くこと。*/
+	short dataln;
 
 	ifp = fopen(inFile, "rb");
 
 	/*Wavのヘッダを読む*/
-	if (readWavHead(ifp, &len, &fs, &chNum, &sampSize) < 0) {
+	if (readWavHead(ifp, &len, &fs, &chNum, &sampSize) < 0)
+	{
 		puts("入力ファイルのヘッダがうまく読めません");
 		exit(-1);
 	}
@@ -41,16 +43,11 @@ void main()
 	printf("チャネル数は %d\n", chNum);
 	printf("1サンプルのビット数は %d ビット\n", sampSize);
 
-	for (int i = 0; i < 8000; i++) {
-
-		/*	ここに、
-		・ファイルの読み書き
-		・データをコンソールに出力
-		を書くとよい。
-		*/
-
+	for (int i = 0; i < 8000; i++)
+	{
+		fread(&dataln, sizeof(short), 1, ifp); // データの読み込み
+		printf("%d\n", dataln);				   // データを出力
 	}
 
 	fclose(ifp);
-
 }
