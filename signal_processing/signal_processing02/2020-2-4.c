@@ -59,7 +59,7 @@ void main()
 	{
 
 		/*フレーム単位でまとめてデータを読み込む*/
-		fread(&dataIn[i], sizeof(short), 1, ifp);
+		fread(&dataIn[i], sizeof(short), 256, ifp);
 
 		/*読み込んだデータをコンソールに出力*/
 		for (int j = 0; j < FRAMESIZE; j++)
