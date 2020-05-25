@@ -69,7 +69,7 @@ void main()
 		{
 			dataOut[j] = dataIn[j];
 		}
-		fwrite(dataOut, sizeof(short), 256, ofp);
+		outFile[i] = fwrite(dataOut, sizeof(short), 256, ofp);
 	}
 
 	fclose(ifp);
