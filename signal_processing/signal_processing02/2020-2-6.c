@@ -74,12 +74,12 @@ void main(int argc, char *argv[])
 
 	for (int i = 0; i < fNum; i++)
 	{
-		fread(&dataIn[i], sizeof(short), 1, ifp);
+		fread(dataIn, sizeof(short), FRAMESIZE, ifp);
 		for (int j = 0; j < FRAMESIZE; j++)
 		{
 			dataOut[j] = dataIn[j];
 		}
-		outFile[i] = fwrite(dataOut, sizeof(short), 256, ofp);
+		fwrite(dataOut, sizeof(short), FRAMESIZE, ofp);
 	}
 
 	fclose(ifp);
