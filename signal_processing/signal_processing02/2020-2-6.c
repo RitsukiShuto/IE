@@ -21,11 +21,11 @@ by mokam@cis
 int readWavHead(FILE *fp, int *dataLength, unsigned long *fs, unsigned short *chNum, int *sampSize);
 int writeWavHead(FILE *fp, int dataLength, unsigned long fs, unsigned short chNum, int sampSize);
 
-void main()
+void main(int argc, char *argv[])
 {
 	//変数の宣言
-	char inFile[] = "VoiceMono.wav";	  //読み込みファイル名
-	char outFile[] = "VoiceMono_out.wav"; //読み込みファイル名
+	char inFile[256];  //読み込みファイル名
+	char outFile[256]; //読み込みファイル名
 	FILE *ifp, *ofp;
 	short dataIn[FRAMESIZE];
 	short dataOut[FRAMESIZE];
@@ -33,6 +33,16 @@ void main()
 	unsigned long fs;
 	unsigned short chNum;
 	int fNum;
+
+	// コマンドライン引数をチェック
+	if (argc < 3)
+	{
+		puts("コマンドライン引数が足りません。");
+		exit(0);
+	}
+
+	strcpy(inFile, argv[1]);
+	strcpy(outFile, argv[2]);
 
 	//ファイルを開く
 	ifp = fopen(inFile, "rb");
