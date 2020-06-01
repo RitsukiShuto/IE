@@ -69,9 +69,7 @@ void main(int argc, char *argv[])
 	for (int i = 0; i < fNum; i++)
 	{
 		fread(dataIn, sizeof(short), FRAMESIZE, ifp);
-
 		volChange(dataIn, dataOut, 0.5, FRAMESIZE);
-
 		fwrite(dataOut, sizeof(short), FRAMESIZE, ofp);
 	}
 
