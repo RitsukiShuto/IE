@@ -61,8 +61,8 @@ void main(int argc, char* argv[])
 
 	fNum = (int)floor(len / FRAMESIZE);		// 実行する回数(フレーム数)の計算
 
-	short daataIn[FRAMESIZE];
-	double dDataInX[FRAMESIZE], dDataInY[FRAMESIZE];
+	short daataIn[fNum];
+	double dDataInX[fNum], dDataInY[fNum];
 
 	for (int i = 0; i < fNum; i++) {
 		fread(dataIn, sizeof(short), FRAMESIZE, ifp);
@@ -72,7 +72,7 @@ void main(int argc, char* argv[])
 		dDataInY[i] = 0.0;
 
 		/*FFTの関数を呼び出すところを追記する*/
-		CT_fft(dDataInX, dDataInY, FRAMESIZE, 1);
+		CT_fft(dDataInX, dDataInY, fNum, 1);
 
 		/*結果をコンソールに出力する。FRAMSIZE単位で区切りがわかるように、空白行を入れる*/
 		for (int j = 0; j < FRAMESIZE; j++) {
