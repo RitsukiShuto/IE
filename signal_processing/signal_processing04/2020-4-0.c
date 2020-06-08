@@ -68,10 +68,9 @@ void main(int argc, char* argv[])
 		short daataIn[FRAMESIZE];
 		double dDataInX[FRAMESIZE], dDataInY[FRAMESIZE];
 
-		for(int j = 0;j < FRAMESIZE;j++){
-			dDataInX[i] = (double)daataIn[i];
-			dDataInY[i] = 0.0;
-		}
+		dDataInX[i] = (double)daataIn[i];
+		dDataInY[i] = 0.0;
+
 		/*FFT‚ÌŠÖ”‚ðŒÄ‚Ño‚·‚Æ‚±‚ë‚ð’Ç‹L‚·‚é*/
 		CT_fft(dDataInX, dDataInY, FRAMESIZE, 1);
 
