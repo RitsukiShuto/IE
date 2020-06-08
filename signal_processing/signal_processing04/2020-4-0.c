@@ -68,7 +68,7 @@ void main(int argc, char* argv[])
 		short daataIn[FRAMESIZE];
 		double dDataInX[FRAMESIZE], dDataInY[FRAMESIZE];
 
-		for(int j = 0;j < FRAMESIZE){
+		for(int j = 0;j < FRAMESIZE;j++){
 			dDataInX[i] = (double)daataIn[i];
 			dDataInY[i] = 0.0;
 		}
