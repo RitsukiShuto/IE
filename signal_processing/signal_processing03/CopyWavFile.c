@@ -1,5 +1,9 @@
 /*
+Edited by RitsukiShuto on 2020/06/08.
 CopyWavFile.c
+
+Cding "Shift JIS"
+
 Wavファイルを開いてファイルのフォーマットをコンソールに出力する
 データはwavファイルに出力する
 

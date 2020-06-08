@@ -1,5 +1,8 @@
 /*
-2020-3-4.c
+Edited by RitsukiShuto on 2020/06/08.
+2020-3-4.c a.k.a. Change_Vol.c
+
+Coding "Shift JIS"
 
 wavファイルを読み、関数でデータを操作し、wavファイルに出力する
 未完成なので、資料を見て完成させると良い
