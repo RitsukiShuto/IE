@@ -61,18 +61,15 @@ void main(int argc, char* argv[])
 
 	fNum = (int)floor(len / FRAMESIZE);		// 実行する回数(フレーム数)の計算
 
+	short daataIn[fNum];
+
 	for (int i = 0; i < fNum; i++) {
 		fread(dataIn, sizeof(short), FRAMESIZE, ifp);
-
-		short daataIn[fNum];
-		double dDataInX[fNum], dDataInY[fNum];
 		
 		/*FFT用のデータ作成を追記する*/
-		for(int j = 0;j < len;j++){
-		
-			dDataInX[j] = (double)dataIn[j];
-			dDataInY[j] = 0.0;
-		}
+		dDataInX[i] = (double)dataIn[i];
+		dDataInY[i] = 0.0;
+
 		/*FFTの関数を呼び出すところを追記する*/
 		CT_fft(dDataInX, dDataInY, fNum, 1);
 
