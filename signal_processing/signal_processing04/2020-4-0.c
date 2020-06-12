@@ -1,5 +1,8 @@
 /*
-2020-4-0.c
+2020-4-0.c aka ex_fft.c
+Edited by RitsukiShuto on 2020/06/12-16:07:35.
+
+Coding 'Shift JIS'
 
 Wavファイルを読み込んで、FFTする。
 結果をそのまま複素数として、コンソールに出力する。
@@ -61,12 +64,13 @@ void main(int argc, char* argv[])
 		fread(dataIn, sizeof(short), FRAMESIZE, ifp);
 
 		/*FFT用のデータ作成を追記する*/
-
-
+		for(int j = 0;j < FRAMESIZE;j++){
+			dDataInX[j] = (double)dataIn[j];
+			dDataInY[j] = 0.0;
+		}
 
 		/*FFTの関数を呼び出すところを追記する*/
-
-
+		CT_fft(dDataInX, dDataInY, FRAMESIZE, 1);
 
 		/*結果をコンソールに出力する。FRAMSIZE単位で区切りがわかるように、空白行を入れる*/
 		for (int j = 0; j < FRAMESIZE; j++) {
