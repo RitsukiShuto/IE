@@ -70,8 +70,6 @@ void main(int argc, char* argv[])
 			printf("%lf\n", pow(dDataInX[j], 2) + pow(dDataInY[j], 2)); //FFT結果の表示。dDataはdoubleなの%lfで表示する。
 		}
 		printf("\n");
-	
-
 	}
 
 	fclose(ifp);
