@@ -1,5 +1,8 @@
 /*
-2020-4-4.c
+2020-4-4.c aka IFFT.c
+Edited by RitsukiShuto on2020/06/13-12:07:18.
+
+Coding 'Shift JIS'
 
 Wavファイルを読み込んで、FFTする。
 FFTの結果を逆FFTし、Wavファイルに出力する。
