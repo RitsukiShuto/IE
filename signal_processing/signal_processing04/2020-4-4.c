@@ -88,7 +88,7 @@ void main(int argc, char* argv[])
 
 		}
 		/*逆FFTする*/
-		CT_fft(dataOutX, dataOutY, FRAMESIZE, 0);
+		CT_fft(dDataOutX, dDataOutY, FRAMESIZE, -1);
 		//逆FFTの文が足りないので追記すること。
 		//逆FFT、４つ目の引数が-1の場合逆FFTとなる。
 
