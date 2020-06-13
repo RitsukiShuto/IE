@@ -94,7 +94,7 @@ void main(int argc, char* argv[])
 
 		for (int j = 0; j < FRAMESIZE; j++) {
 			//Wavファイルに書き出すために、dDataOutX[j]をshortに型変換し、dataOutXに代入する部分の追記が必要
-			dataOutX[j] = (short)dataOutX[j];
+			dataOutX[j] = (short)dDataOutX[j];
 		}
 
 		fwrite(dataOutX, sizeof(short), FRAMESIZE, ofp); //今回はdataOutXのみを書き出しているが、Yの扱いは場合により必要になる場合もある。
