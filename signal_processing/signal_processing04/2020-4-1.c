@@ -67,7 +67,7 @@ void main(int argc, char* argv[])
 		}
 		CT_fft(dDataInX, dDataInY, FRAMESIZE, 1); //FFTの実行
 		for (int j = 0; j < FRAMESIZE; j++) {
-			printf("%lf,%lf\n", dDataInX[j], dDataInY[j]); //FFT結果の表示。dDataはdoubleなの%lfで表示する。
+			printf("%lf\n", pow(dDataInX[j], 2) + pow(dDataInY[j], 2)); //FFT結果の表示。dDataはdoubleなの%lfで表示する。
 		}
 		printf("\n");
 	
