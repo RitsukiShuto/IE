@@ -1,0 +1,8 @@
+input file is 500Sine.wav.
+output file is IFFT_500Sine.wav.
+ファイルの長さは 8000 サンプル
+サンプリング周波数は 8000 Hz
+チャネル数は 1
+1サンプルのビット数は 16 ビット
+write Sample Number 7936 sample
+write file length 15916 byte
