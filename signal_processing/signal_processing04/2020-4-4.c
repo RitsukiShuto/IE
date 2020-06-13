@@ -88,17 +88,17 @@ void main(int argc, char* argv[])
 
 		}
 		/*逆FFTする*/
+		CT_fft(dataOutX, dataOutY, FRAMESIZE, -1);
 		//逆FFTの文が足りないので追記すること。
 		//逆FFT、４つ目の引数が-1の場合逆FFTとなる。
 
 		for (int j = 0; j < FRAMESIZE; j++) {
 			//Wavファイルに書き出すために、dDataOutX[j]をshortに型変換し、dataOutXに代入する部分の追記が必要
-
+			dataOutX[j] = (short)dataOutX[j];
 		}
 
 		fwrite(dataOutX, sizeof(short), FRAMESIZE, ofp); //今回はdataOutXのみを書き出しているが、Yの扱いは場合により必要になる場合もある。
-
-
+		
 	}
 
 	fclose(ifp);
