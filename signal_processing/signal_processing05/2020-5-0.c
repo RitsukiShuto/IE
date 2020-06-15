@@ -38,6 +38,9 @@ void main(int argc, char* argv[])
 	unsigned short chNum;
 	int fNum;
 
+	double GAIN;
+	double N1, N2;
+
 	if (argc < 3) {
 		printf("引数が足りません。読み込むファイル名と書き込むファイル名を指定してください");
 		exit(0);
@@ -90,17 +93,23 @@ void main(int argc, char* argv[])
 		そのままコピーしてよいので、上記のfor文はそのまま残して、この後に、ある範囲だけを小さくする
 		forを書いた方がプログラムとしては楽。*/
 		/* なので、この下にforの範囲が異なるforループを作り資料を見て記載することを勧める */
-
+//		for(int j = N1; j < N2; j++){
+//			dDataOutX[j] = GAIN * dDataOutX[j];
+//			dDataOutY[j] = GAIN * dDataOutY[j];
+//		}
 
 		CT_fft(dDataOutX, dDataOutY, FRAMESIZE, -1); //逆FFT、４つ目の引数が-1の場合逆FFTとなる。
 
+
+
+
 		for (int j = 0; j < FRAMESIZE; j++) {
-//			printf("%lf,%lf\n", dDataOutX[j], dDataOutY[j]); // 逆FFTの結果を見たいなら、これを出力する
-			dataOutX[j] = (short)dDataOutX[j]; // Wavファイルに書き出すためにshortに型変換する
-			dataOutY[j] = (short)dDataOutY[j]; // Wavファイルに書き出すためにshortに型変換する
-//			printf("%d,%d\n", dataOutX[j], dataOutY[j]); // ファイルに書き出す数値を見たいなら、これを出力する
+			printf("%lf,%lf\n", dDataOutX[j], dDataOutY[j]);// 逆FFTの結果を見たいなら、これを出力する
+			dataOutX[j] = (short)dDataOutX[j]; 				// Wavファイルに書き出すためにshortに型変換する
+			dataOutY[j] = (short)dDataOutY[j]; 				// Wavファイルに書き出すためにshortに型変換する
+			printf("%d,%d\n", dataOutX[j], dataOutY[j]); 	// ファイルに書き出す数値を見たいなら、これを出力する
 		}
-//		printf("\n");
+		printf("\n");
 
 		fwrite(dataOutX, sizeof(short), FRAMESIZE, ofp); // dataOutXのみを書き出しているが、Yの扱いは場合による
 	}
