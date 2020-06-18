@@ -1,5 +1,8 @@
 /*
-2020-4-1.c
+2020-4-1.c a.k.a. FFT.c
+Edited by RitsukiShuto on 2020/06/18-22:18:51.
+
+Coding 'UTF-8'
 
 Wavファイルを読み込んで、FFTする。
 結果をそのまま複素数として、コンソールに出力する。
