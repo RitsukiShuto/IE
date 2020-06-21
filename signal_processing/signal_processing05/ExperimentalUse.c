@@ -64,8 +64,8 @@ void main(int argc, char *argv[]){
     }
 
     // 出力ファイル名を作成
-    strcpy(csvFile, strcat("PowSpectorum", ioFile, ".csv"));
-    strcpy(outFile, strcat("Out", ioFile, ".wav"));
+    sprintf(csvFile, "PowSpectorum", ioFile, ".csv");
+    sprintf(outFile, "Out", ioFile, ".wav");
 
 	printf("input file is %s.\n", inFile);
 	printf("output file is %s.\n", outFile);
