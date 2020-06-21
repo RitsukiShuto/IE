@@ -34,6 +34,7 @@ void main(){
     int fNum;
 
     double GAIN;
+    double sfpf;    // Sampling frequency per frame
     int cut_Hz_N1, cut_Hz_N2;
     int N1, N2;
 
@@ -47,6 +48,11 @@ void main(){
         scanf_s("%lf", &cut_Hz_N1);
         printf("œ‹‚µ‚½‚¢ü”g”‘Ñˆæ‚ÌÅ‘å’l‚ğ“ü—Í[Hz]: ");
 	    scanf_s("%lf", &cut_Hz_N2);
+
+        sfpf = fs / FRAMESIZE;
+
+        N1 = cut_Hz_N1 / sfpf;
+	    N2 = cut_Hz_N2 / sfpf;
 
         printf("FRAMESIZE: %d\n", FRAMESIZE);
         printf("GAIN: %d\n", GAIN);
