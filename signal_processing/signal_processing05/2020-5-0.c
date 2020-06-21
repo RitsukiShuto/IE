@@ -69,6 +69,7 @@ void main(int argc, char* argv[])
 
 	fNum = (int)floor(len / FRAMESIZE);
 	outlen = fNum * FRAMESIZE;
+
 	/*
 	書き込み用のwavファイルのヘッダを書き込む。データのサイズまで,
 	書き込んでいるので、この後はかならずoutlenと同じだけfwriteすること
@@ -89,22 +90,23 @@ void main(int argc, char* argv[])
 			dDataOutY[j] = dDataInY[j];
 
 		}
+
+		/* カットする周波数帯域を計算 */
+		
+
 		/* dDataOutXとdDataOutYへの代入は範囲を分けて行うべきだが、ある範囲以外は、すべて
 		そのままコピーしてよいので、上記のfor文はそのまま残して、この後に、ある範囲だけを小さくする
 		forを書いた方がプログラムとしては楽。*/
 		/* なので、この下にforの範囲が異なるforループを作り資料を見て記載することを勧める */
-//		for(int j = N1; j < N2; j++){
-//			dDataOutX[j] = GAIN * dDataOutX[j];
-//			dDataOutY[j] = GAIN * dDataOutY[j];
-//		}
+		for(int j = N1;j <= N2;j++){	
+			dataOutX[j] = 0;
+			dataOutY[j] = 0;
+		}
 
 		CT_fft(dDataOutX, dDataOutY, FRAMESIZE, -1); //逆FFT、４つ目の引数が-1の場合逆FFTとなる。
 
-
-
-
 		for (int j = 0; j < FRAMESIZE; j++) {
-			printf("%lf,%lf\n", dDataOutX[j], dDataOutY[j]);// 逆FFTの結果を見たいなら、これを出力する
+//			printf("%lf,%lf\n", dDataOutX[j], dDataOutY[j]);// 逆FFTの結果を見たいなら、これを出力する
 			dataOutX[j] = (short)dDataOutX[j]; 				// Wavファイルに書き出すためにshortに型変換する
 			dataOutY[j] = (short)dDataOutY[j]; 				// Wavファイルに書き出すためにshortに型変換する
 			printf("%d,%d\n", dataOutX[j], dataOutY[j]); 	// ファイルに書き出す数値を見たいなら、これを出力する
