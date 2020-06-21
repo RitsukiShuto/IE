@@ -80,9 +80,9 @@ void main(int argc, char* argv[])
 	double cut_Hz_N1 = 0, cut_Hz_N2 = 0;
 
 	printf("œ‹‚µ‚½‚¢ü”g”‘Ñˆæ‚ÌÅ¬’l‚ğ“ü—Í[Hz]: ");
-	scanf_s("%lf", &cut_Hz_N1);
+	scanf("%lf", &cut_Hz_N1);
 	printf("œ‹‚µ‚½‚¢ü”g”‘Ñˆæ‚ÌÅ‘å’l‚ğ“ü—Í[Hz]: ");
-	scanf_s("%lf", &cut_Hz_N2);
+	scanf("%lf", &cut_Hz_N2);
 
 	N1 = cut_Hz_N1 / 375.0;
 	N2 = cut_Hz_N2 / 375.0;
