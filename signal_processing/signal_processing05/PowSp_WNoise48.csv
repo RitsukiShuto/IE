@@ -1,9 +1,0 @@
-input file is WhiteNoise48.wav.
-output file is OUTWNoise48.wav.
-ファイルの長さは 48000 サンプル
-サンプリング周波数は 48000 Hz
-チャネル数は 1
-1サンプルのビット数は 16 ビット
-write Sample Number 48000 sample
-write file length 96044 byte
-除去したい周波数帯域の最小値を入力[Hz]: 除去したい周波数帯域の最大値を入力[Hz]: 
