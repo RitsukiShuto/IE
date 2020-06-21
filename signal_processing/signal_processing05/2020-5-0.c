@@ -15,7 +15,7 @@ by mokam@cis
 #include<stdio.h>
 #include<math.h>
 
-#define FRAMESIZE 256
+#define FRAMESIZE 128
 
 /*こういう関数を使うよ、という宣言*/
 int readWavHead(FILE* fp, int* dataLength, unsigned long* fs, unsigned short* chNum, int* sampSize);
@@ -38,8 +38,8 @@ void main(int argc, char* argv[])
 	unsigned short chNum;
 	int fNum;
 
-	double GAIN;
-	double N1, N2;
+	double GAIN = 0.0001;
+	int N1, N2;
 
 	if (argc < 3) {
 		printf("引数が足りません。読み込むファイル名と書き込むファイル名を指定してください");
@@ -76,31 +76,40 @@ void main(int argc, char* argv[])
 	*/
 	writeWavHead(ofp, outlen, fs, chNum, sampSize);
 
+	/* カットする周波数帯域を計算 */
+	double cut_Hz_N1 = 0, cut_Hz_N2 = 0;
+
+	printf("除去したい周波数帯域の最小値を入力[Hz]: ");
+	scanf_s("%lf", &cut_Hz_N1);
+	printf("除去したい周波数帯域の最大値を入力[Hz]: ");
+	scanf_s("%lf", &cut_Hz_N2);
+
+	N1 = cut_Hz_N1 / 375.0;
+	N2 = cut_Hz_N2 / 375.0;
+
+	printf("\n%lf[Hz]から%lf[Hz]を除去\n", cut_Hz_N1, cut_Hz_N2);
+	printf("操作対象の要素番号は[%d]から[%d]\n", N1, N2);
+
 	for (int i = 0; i < fNum; i++) {
 		fread(dataIn, sizeof(short), FRAMESIZE, ifp);
 
 		for (int j = 0; j < FRAMESIZE; j++) {
 			dDataInX[j] = (double)dataIn[j];  // CT_fftはdoubleの変数を使うので、doubleの変数に代入してください。
 			dDataInY[j] = 0.0; // 虚数部は0.0を入れておきます。
-
 		}
 		CT_fft(dDataInX, dDataInY, FRAMESIZE, 1); //FFT
 		for (int j = 0; j < FRAMESIZE; j++) {
 			dDataOutX[j] = dDataInX[j];
 			dDataOutY[j] = dDataInY[j];
-
 		}
-
-		/* カットする周波数帯域を計算 */
-		
 
 		/* dDataOutXとdDataOutYへの代入は範囲を分けて行うべきだが、ある範囲以外は、すべて
 		そのままコピーしてよいので、上記のfor文はそのまま残して、この後に、ある範囲だけを小さくする
 		forを書いた方がプログラムとしては楽。*/
 		/* なので、この下にforの範囲が異なるforループを作り資料を見て記載することを勧める */
-		for(int j = N1;j <= N2;j++){	
-			dataOutX[j] = 0;
-			dataOutY[j] = 0;
+		for(int j = N1;j < N2;j++){	
+			dDataOutX[j] = GAIN * dDataOutX[j];
+			dDataOutY[j] = GAIN * dDataOutY[j];
 		}
 
 		CT_fft(dDataOutX, dDataOutY, FRAMESIZE, -1); //逆FFT、４つ目の引数が-1の場合逆FFTとなる。
@@ -109,9 +118,9 @@ void main(int argc, char* argv[])
 //			printf("%lf,%lf\n", dDataOutX[j], dDataOutY[j]);// 逆FFTの結果を見たいなら、これを出力する
 			dataOutX[j] = (short)dDataOutX[j]; 				// Wavファイルに書き出すためにshortに型変換する
 			dataOutY[j] = (short)dDataOutY[j]; 				// Wavファイルに書き出すためにshortに型変換する
-			printf("%d,%d\n", dataOutX[j], dataOutY[j]); 	// ファイルに書き出す数値を見たいなら、これを出力する
+//			printf("%d,%d\n", dataOutX[j], dataOutY[j]); 	// ファイルに書き出す数値を見たいなら、これを出力する
 		}
-		printf("\n");
+//		printf("\n");
 
 		fwrite(dataOutX, sizeof(short), FRAMESIZE, ofp); // dataOutXのみを書き出しているが、Yの扱いは場合による
 	}
