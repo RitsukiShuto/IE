@@ -39,6 +39,7 @@ void main(int argc, char* argv[])
 	int fNum;
 
 	double GAIN = 0.0001;
+	double cutOff;
 	int N1, N2;
 
 	if (argc < 3) {
