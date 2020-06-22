@@ -8,9 +8,7 @@ Coding 'Shift JIS'
     *実行結果はすべてcsvファイルで帰ってくる
 
 --コンパイル--
-    cl ExperimentalUse.c readWavHead.c writeWavHead.c CT_fft.c
-    link \out:ExUse.exe ExperimentalUse.obj readWavHead.obj writeWavHead.obj CT_fft.obj
-    ExUse.exe <入力wavファイル>
+    gccを使用する。clではコンパイルが通らない可能性あり
 
 */
 #include<stdio.h>
@@ -42,7 +40,8 @@ void main(int argc, char *argv[]){
     int fNum;
 
     double GAIN;
-    double sfpf;    // Sampling frequency per frame
+    double cutOff;
+    int cutHz, cutHzL1, cutHzL2;
     int cut_Hz_N1, cut_Hz_N2;
     int N1, N2;
 
@@ -105,25 +104,26 @@ void main(int argc, char *argv[]){
     printf("FRAMESIZE = ");     scanf("%d", &FRAMESIZE);
     printf("GAIN = ");          scanf("%lf", &GAIN);
     printf("除去したい周波数帯域の最小値を入力[Hz]: ");
-    scanf("%lf", &cut_Hz_N1);
+    scanf("%d", &cutHzL1);
     printf("除去したい周波数帯域の最大値を入力[Hz]: ");
-    scanf("%lf", &cut_Hz_N2);
+    scanf("%d", &cutHzL2);
 
-    sfpf = fs / FRAMESIZE;
-
-    N1 = cut_Hz_N1 / sfpf;
-    N2 = cut_Hz_N2 / sfpf;
+    cutOff = cutHzL1 * (FRAMESIZE / (double)fs);
+    N1 = (int)cutOff + 1;
+    cutOff = cutHzL2 * (FRAMESIZE /(double)fs);
+    N2 = (int)cutOff + 1;
 
     printf("FRAMESIZE: %d\n", FRAMESIZE);
-    printf("GAIN: %d\n", GAIN);
-	printf("%lf[Hz]から%lf[Hz]を除去\n", cut_Hz_N1, cut_Hz_N2);
+    printf("GAIN: %lf\n", GAIN);
+	printf("%d[Hz]から%d[Hz]を除去\n", cutHzL1, cutHzL2);
     printf("操作対象の要素番号は[%d]から[%d]\n", N1, N2);
 
     fprintf(fp_info, "FRAMESIZE: %d\n", FRAMESIZE);
     fprintf(fp_info, "GAIN: %lf\n", GAIN);
-	fprintf(fp_info, "%lf[Hz]から%lf[Hz]を除去\n", cut_Hz_N1, cut_Hz_N2);
+	fprintf(fp_info, "%d[Hz]から%d[Hz]を除去\n", cutHzL1, cutHzL2);
     fprintf(fp_info, "操作対象の要素番号は[%d]から[%d]\n", N1, N2);
 
+    // エラーは無視
     short dataIn[FRAMESIZE];
 	short dataOutX[FRAMESIZE], dataOutY[FRAMESIZE];
 	double dDataInX[FRAMESIZE], dDataInY[FRAMESIZE];
@@ -141,33 +141,44 @@ void main(int argc, char *argv[]){
 	for (int i = 0; i < fNum; i++) {
 		fread(dataIn, sizeof(short), FRAMESIZE, ifp);
 
+        // FFT用のデータを準備
 		for (int j = 0; j < FRAMESIZE; j++) {
 			dDataInX[j] = (double)dataIn[j];  // CT_fftはdoubleの変数を使うので、doubleの変数に代入してください。
 			dDataInY[j] = 0.0;                // 虚数部は0.0を入れておきます。
 		}
+
 		CT_fft(dDataInX, dDataInY, FRAMESIZE, 1); //FFT
+
+        // FFT結果をパワースペクトルにして格納
 		for (int j = 0; j < FRAMESIZE; j++) {
 			dDataOutX[j] = dDataInX[j];
 			dDataOutY[j] = dDataInY[j];
-            fprintf(fp_spect, "%lf\n", pow(dDataOutX[j], 2) + pow(dDataOutY[j], 2));
 		}
+        // NEW 対象の周波数を処理
+        for(int j = 0;j < FRAMESIZE; j++){
+            if(j >= N1 && j < N2){
+                dDataOutX[j] = GAIN * dDataOutX[j];
+			    dDataOutY[j] = GAIN * dDataOutY[j];
+                fprintf(fp_spect, "%lf\n", sqrt(pow(dDataOutX[j], 2) + pow(dDataOutY[j], 2)));
+            }else{
+                dDataOutX[j] = dDataInX[j];
+			    dDataOutY[j] = dDataInY[j];
+                fprintf(fp_spect, "%lf\n", sqrt(pow(dDataOutX[j], 2) + pow(dDataOutY[j], 2)));
+            }
+        }
 
-		for(int j = N1;j < N2;j++){	
-			dDataOutX[j] = GAIN * dDataOutX[j];
-			dDataOutY[j] = GAIN * dDataOutY[j];
-		}
-
-		CT_fft(dDataOutX, dDataOutY, FRAMESIZE, -1); //逆FFT、４つ目の引数が-1の場合逆FFTとなる。
+		CT_fft(dDataOutX, dDataOutY, FRAMESIZE, -1);    // IFFT(arg4 = -1)
 
 		for (int j = 0; j < FRAMESIZE; j++) {
 //			fprintf(fp_vol, "%lf,%lf\n", dDataOutX[j], dDataOutY[j]);   // 逆FFTの結果を見たいなら、これを出力する
-			dataOutX[j] = (short)dDataOutX[j]; 				        // Wavファイルに書き出すためにshortに型変換する
-			dataOutY[j] = (short)dDataOutY[j]; 				        // Wavファイルに書き出すためにshortに型変換する
+			dataOutX[j] = (short)dDataOutX[j]; 				            // Wavファイルに書き出すためにshortに型変換する
+			dataOutY[j] = (short)dDataOutY[j]; 				            // Wavファイルに書き出すためにshortに型変換する
 			fprintf(fp_vol, "%d,%d\n", dataOutX[j], dataOutY[j]); 	    // ファイルに書き出す数値を見たいなら、これを出力する
 		}
-//		printf("\n");
+		fprintf(fp_spect, "\n");
+        fprintf(fp_vol, "\n");
 
-		fwrite(dataOutX, sizeof(short), FRAMESIZE, ofp); // dataOutXのみを書き出しているが、Yの扱いは場合による
+		fwrite(dataOutX, sizeof(short), FRAMESIZE, ofp);    // dataOutXのみを書き出しているが、Yの扱いは場合による
 	}
 
 	fclose(ifp);
