@@ -23,6 +23,7 @@ int writeWavHead(FILE* fp, int dataLength, unsigned long fs, unsigned short  chN
 int CT_fft(double* x, double* y, int n, int fr);
 
 void main(int argc, char *argv[]){
+    // 入出力ファイル
     char ioFile[256];  // 出力ファイルの素
     char inFile[256];   // 入力ファイル
     char outFile[256];  // 出力ファイル
@@ -32,21 +33,21 @@ void main(int argc, char *argv[]){
 
     FILE *ifp, *ofp, *fp_info, *fp_spect, *fp_vol;
 
+    // 信号処理用
     int FRAMESIZE;
-
     int len, sampSize, outlen;
     unsigned long fs;
     unsigned short chNum;
     int fNum;
 
+    // 周波数除去用 
     double GAIN;
     double cutOff;
     int cutHz, cutHzL1, cutHzL2;
     int cut_Hz_N1, cut_Hz_N2;
     int N1, N2;
 
-    int yN;
-
+    // コマンドライン引数を確認
     if(argc < 2){
         puts("コマンドライン引数が足りません");
         exit(0);
@@ -56,11 +57,13 @@ void main(int argc, char *argv[]){
     strcpy(ioFile, argv[1]);
 
     for(int i = 0;i < 256;i++){
-        if(ioFile[i] == '.'){  // '.'を検索
+        // '.'を検索
+        if(ioFile[i] == '.'){
+            // 拡張子以降を'\0'で埋める
             for(int j = i;j < 256;j++){
-                // 拡張子を'\0'で埋める
                 ioFile[j] = '\0';
-                if(ioFile[j + 1] == '\0'){  // Null文字を検索
+                // Null文字が見つかったら終了
+                if(ioFile[j + 1] == '\0'){
                     break;
                 }
             }
@@ -68,16 +71,24 @@ void main(int argc, char *argv[]){
     }
 
     // 出力ファイル名を作成
-    sprintf(outFile, "Out%s.wav", ioFile);
+    sprintf(outFile, "Out%s.wav", ioFile);      // sprintf:文字列連結用関数
     sprintf(csvinfoFile, "info%s.csv", ioFile);
     sprintf(csvspctFile, "PowSpect%s.csv", ioFile);
     sprintf(csvvolFile, "Vol%s.csv", ioFile);
 
-	printf("input file is %s.\n", inFile);
-	printf("output file is %s.\n", outFile);
+    // 出力ファイルを確認
+	puts("以下のファイルが作成されます");
+    printf("%s\n", outFile);
+    printf("%s\n", csvinfoFile);
+    printf("%s\n", csvspctFile);
+    printf("%s\n", csvvolFile);
 
 	ifp = fopen(inFile, "rb");
+
 	ofp = fopen(outFile, "wb");
+    fp_info = fopen(csvinfoFile, "w");
+    fp_spect = fopen(csvspctFile, "w");
+    fp_vol = fopen(csvvolFile, "w");
 
     // wavヘッダを読み込み
 	if (readWavHead(ifp, &len, &fs, &chNum, &sampSize) < 0) {
@@ -85,21 +96,19 @@ void main(int argc, char *argv[]){
 		exit(-1);
 	}
 
-    fp_info = fopen(csvinfoFile, "w");
-    fp_spect = fopen(csvspctFile, "w");
-    fp_vol = fopen(csvvolFile, "w");
-
 	// wavパラメータを出力
 	printf("ファイルの長さは %d サンプル\n", len);
 	printf("サンプリング周波数は %d Hz\n", fs);
 	printf("チャネル数は %d\n", chNum);
 	printf("1サンプルのビット数は %d ビット\n\n", sampSize);
 
+    // wavパラメータを書き込み
     fprintf(fp_info, "ファイルの長さは %d サンプル\n", len);
 	fprintf(fp_info, "サンプリング周波数は %d Hz\n", fs);
 	fprintf(fp_info, "チャネル数は %d\n", chNum);
 	fprintf(fp_info, "1サンプルのビット数は %d ビット\n\n", sampSize);
 
+    // 入力ファイルパラメータ入力部
     puts("各種パラメータを入力");
     printf("FRAMESIZE = ");     scanf("%d", &FRAMESIZE);
     printf("GAIN = ");          scanf("%lf", &GAIN);
@@ -108,22 +117,25 @@ void main(int argc, char *argv[]){
     printf("除去したい周波数帯域の最大値を入力[Hz]: ");
     scanf("%d", &cutHzL2);
 
+    // 処理領域を計算
     cutOff = cutHzL1 * (FRAMESIZE / (double)fs);
-    N1 = (int)cutOff + 1;
+    N1 = (int)cutOff + 1;       // 始点
     cutOff = cutHzL2 * (FRAMESIZE /(double)fs);
-    N2 = (int)cutOff + 1;
+    N2 = (int)cutOff + 1;       // 終点
 
+    // 入力ファイルパラメータを確認
     printf("FRAMESIZE: %d\n", FRAMESIZE);
     printf("GAIN: %lf\n", GAIN);
 	printf("%d[Hz]から%d[Hz]を除去\n", cutHzL1, cutHzL2);
     printf("操作対象の要素番号は[%d]から[%d]\n", N1, N2);
 
+    // 書き込み info
     fprintf(fp_info, "FRAMESIZE: %d\n", FRAMESIZE);
     fprintf(fp_info, "GAIN: %lf\n", GAIN);
 	fprintf(fp_info, "%d[Hz]から%d[Hz]を除去\n", cutHzL1, cutHzL2);
     fprintf(fp_info, "操作対象の要素番号は[%d]から[%d]\n", N1, N2);
 
-    // エラーは無視
+    //// BUG:clコマンドでコンパイルが通らない場所 => gccコンパイラで通るのでヨシ!
     short dataIn[FRAMESIZE];
 	short dataOutX[FRAMESIZE], dataOutY[FRAMESIZE];
 	double dDataInX[FRAMESIZE], dDataInY[FRAMESIZE];
@@ -132,19 +144,16 @@ void main(int argc, char *argv[]){
     fNum = (int)floor(len / FRAMESIZE);
 	outlen = fNum * FRAMESIZE;
 
-	/*
-	書き込み用のwavファイルのヘッダを書き込む。データのサイズまで,
-	書き込んでいるので、この後はかならずoutlenと同じだけfwriteすること
-	*/
 	writeWavHead(ofp, outlen, fs, chNum, sampSize);
 
+    // 以下音声処理
 	for (int i = 0; i < fNum; i++) {
 		fread(dataIn, sizeof(short), FRAMESIZE, ifp);
 
         // FFT用のデータを準備
 		for (int j = 0; j < FRAMESIZE; j++) {
-			dDataInX[j] = (double)dataIn[j];  // CT_fftはdoubleの変数を使うので、doubleの変数に代入してください。
-			dDataInY[j] = 0.0;                // 虚数部は0.0を入れておきます。
+			dDataInX[j] = (double)dataIn[j];
+			dDataInY[j] = 0.0;
 		}
 
 		CT_fft(dDataInX, dDataInY, FRAMESIZE, 1); //FFT
@@ -154,27 +163,28 @@ void main(int argc, char *argv[]){
 			dDataOutX[j] = dDataInX[j];
 			dDataOutY[j] = dDataInY[j];
 		}
-        // NEW 対象の周波数を処理
+        // 対象の周波数を処理()
         for(int j = 0;j < FRAMESIZE; j++){
             if(j >= N1 && j < N2){
-                dDataOutX[j] = GAIN * dDataOutX[j];
+                dDataOutX[j] = GAIN * dDataOutX[j];     // 波形処理
 			    dDataOutY[j] = GAIN * dDataOutY[j];
-                fprintf(fp_spect, "%lf\n", sqrt(pow(dDataOutX[j], 2) + pow(dDataOutY[j], 2)));
+                fprintf(fp_spect, "%lf\n", sqrt(pow(dDataOutX[j], 2) + pow(dDataOutY[j], 2)));  // PowSpect
             }else{
-                dDataOutX[j] = dDataInX[j];
+                dDataOutX[j] = dDataInX[j];             // 処理が不要な信号なので何もしない
 			    dDataOutY[j] = dDataInY[j];
-                fprintf(fp_spect, "%lf\n", sqrt(pow(dDataOutX[j], 2) + pow(dDataOutY[j], 2)));
+                fprintf(fp_spect, "%lf\n", sqrt(pow(dDataOutX[j], 2) + pow(dDataOutY[j], 2)));  // PowSpect
             }
         }
 
 		CT_fft(dDataOutX, dDataOutY, FRAMESIZE, -1);    // IFFT(arg4 = -1)
 
 		for (int j = 0; j < FRAMESIZE; j++) {
-//			fprintf(fp_vol, "%lf,%lf\n", dDataOutX[j], dDataOutY[j]);   // 逆FFTの結果を見たいなら、これを出力する
-			dataOutX[j] = (short)dDataOutX[j]; 				            // Wavファイルに書き出すためにshortに型変換する
-			dataOutY[j] = (short)dDataOutY[j]; 				            // Wavファイルに書き出すためにshortに型変換する
-			fprintf(fp_vol, "%d,%d\n", dataOutX[j], dataOutY[j]); 	    // ファイルに書き出す数値を見たいなら、これを出力する
+//			fprintf(fp_vol, "%lf,%lf\n", dDataOutX[j], dDataOutY[j]);   // 逆FFTの結果
+			dataOutX[j] = (short)dDataOutX[j];
+			dataOutY[j] = (short)dDataOutY[j];
+			fprintf(fp_vol, "%d,%d\n", dataOutX[j], dataOutY[j]); 	    // Vol
 		}
+
 		fprintf(fp_spect, "\n");
         fprintf(fp_vol, "\n");
 
@@ -186,4 +196,6 @@ void main(int argc, char *argv[]){
     fclose(fp_info);
     fclose(fp_spect);
     fclose(fp_vol);
+
+    return 0;
 }
