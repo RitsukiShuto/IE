@@ -23,12 +23,12 @@ int CT_fft(double* x, double* y, int n, int fr);
 
 void main(int argc, char *argv[]){
     // 入出力ファイル
-    char ioFile[256];  // 出力ファイルの素
-    char inFile[256];   // 入力ファイル
-    char outFile[256];  // 出力ファイル
-    char csvspctFile[256];  // CSVファイル
-    char csvinfoFile[256];
-    char csvbfFile[256];
+    char ioFile[64];  // 出力ファイルの素
+    char inFile[64];   // 入力ファイル
+    char outFile[64];  // 出力ファイル
+    char csvspctFile[64];  // CSVファイル
+    char csvinfoFile[64];
+    char csvbfFile[64];
 
     FILE *ifp, *ofp, *fp_info, *fp_spect, *fp_bfsp;
 
