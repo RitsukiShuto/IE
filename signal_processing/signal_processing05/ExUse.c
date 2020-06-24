@@ -166,9 +166,6 @@ void main(int argc, char *argv[]){
 		for (int j = 0; j < FRAMESIZE; j++) {
 			dDataOutX[j] = dDataInX[j];
 			dDataOutY[j] = dDataInY[j];
-
-            //// BUG: なぜかCSVに書き出されない, TODO: 修正
-            //// 0だけ入力されているので変数が怪しいかも
             fprintf(fp_bfsp, "%lf\n", sqrt(pow(dDataInX[j], 2) + pow(dDataInY[j], 2))); 	    // 処理前のパワースペクトル
 		}
         // 対象の周波数を処理()
