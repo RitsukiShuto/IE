@@ -114,14 +114,19 @@ void main(int argc, char *argv[]){
     printf("GAIN = ");          scanf("%lf", &GAIN);
     printf("除去したい周波数帯域の最小値を入力[Hz]: ");
     scanf("%d", &cutHzL1);
-    printf("除去したい周波数帯域の最大値を入力[Hz]: ");
+    printf("除去したい周波数帯域の最大値を入力[Hz]{(-1)で最大周波数まで選択}: ");
     scanf("%d", &cutHzL2);
 
     // 処理領域を計算
     cutOff = cutHzL1 * (FRAMESIZE / (double)fs);
-    N1 = (int)cutOff + 1;       // 始点
-    cutOff = cutHzL2 * (FRAMESIZE /(double)fs);
-    N2 = (int)cutOff + 1;       // 終点
+    N1 = (int)cutOff + 1;                       // 始点
+
+    if(cutHzL2 == -1){
+        N2 = FRAMESIZE -1 - ((int)cutOff - 1);  // -1が入力されたら最高周波数までカット
+    }else{
+        cutOff = cutHzL2 * (FRAMESIZE /(double)fs);
+        N2 = (int)cutOff + 1;                   // 終点
+    }
 
     // 入力ファイルパラメータを確認
     printf("FRAMESIZE: %d\n", FRAMESIZE);
