@@ -71,6 +71,10 @@ void main(int argc, char* argv[])
 	fNum = (int)floor(len / FRAMESIZE);
 	outlen = fNum * FRAMESIZE;
 
+	cutOff = 2000 * (FRAMESIZE / (double)fs);
+	N1 = (int)cutOff + 1;
+	N2 = FRAMESIZE -1 - ((int)cutOff - 1);
+
 	/*
 	書き込み用のwavファイルのヘッダを書き込む。データのサイズまで,
 	書き込んでいるので、この後はかならずoutlenと同じだけfwriteすること
