@@ -166,7 +166,7 @@ void main(int argc, char *argv[]){
 		for (int j = 0; j < FRAMESIZE; j++) {
 			dDataOutX[j] = dDataInX[j];
 			dDataOutY[j] = dDataInY[j];
-            fprintf(fp_bfsp, "%f\n", sqrt(pow(dataOutX[j], 2) + pow(dataOutY[j], 2))); 	    // 処理前のパワースペクトル
+            fprintf(fp_bfsp, "%lf\n", sqrt(pow(dataOutX[j], 2) + pow(dataOutY[j], 2))); 	    // 処理前のパワースペクトル
 		}
         // 対象の周波数を処理()
         for(int j = 0;j < FRAMESIZE; j++){
