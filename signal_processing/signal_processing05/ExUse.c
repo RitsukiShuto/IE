@@ -81,7 +81,7 @@ void main(int argc, char *argv[]){
     printf("%s\n", outFile);
     printf("%s\n", csvinfoFile);
     printf("%s\n", csvspctFile);
-    printf("%s\n", csvvolFile);
+    printf("%s\n\n", csvvolFile);
 
 	ifp = fopen(inFile, "rb");
 
