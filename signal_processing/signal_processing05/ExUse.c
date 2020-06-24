@@ -55,6 +55,7 @@ void main(int argc, char *argv[]){
 	strcpy(inFile, argv[1]);    // 入力ファイルをコピー
     strcpy(ioFile, argv[1]);
 
+    // 入力ファイルから出力ファイルの素を作成
     for(int i = 0;i < 256;i++){
         // '.'を検索
         if(ioFile[i] == '.'){
