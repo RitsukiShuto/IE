@@ -28,9 +28,9 @@ void main(int argc, char *argv[]){
     char outFile[256];  // 出力ファイル
     char csvspctFile[256];  // CSVファイル
     char csvinfoFile[256];
-    char csvvolFile[256];
+    char csvbfFile[256];
 
-    FILE *ifp, *ofp, *fp_info, *fp_spect, *fp_vol;
+    FILE *ifp, *ofp, *fp_info, *fp_spect, *fp_bfsp;
 
     // 信号処理用
     int FRAMESIZE;
@@ -73,22 +73,22 @@ void main(int argc, char *argv[]){
     // 出力ファイル名を作成
     sprintf(outFile, "Out%s.wav", ioFile);      // sprintf:文字列連結用関数
     sprintf(csvinfoFile, "info%s.csv", ioFile);
-    sprintf(csvspctFile, "PowSpect%s.csv", ioFile);
-    sprintf(csvvolFile, "Vol%s.csv", ioFile);
+    sprintf(csvspctFile, "Processed_PowSpect%s.csv", ioFile);
+    sprintf(csvbfFile, "Before_PowSpect%s.csv", ioFile);
 
     // 出力ファイルを確認
 	puts("以下のファイルが作成されます");
     printf("%s\n", outFile);
     printf("%s\n", csvinfoFile);
     printf("%s\n", csvspctFile);
-    printf("%s\n\n", csvvolFile);
+    printf("%s\n\n", csvbfFile);
 
 	ifp = fopen(inFile, "rb");
 
 	ofp = fopen(outFile, "wb");
     fp_info = fopen(csvinfoFile, "w");
     fp_spect = fopen(csvspctFile, "w");
-    fp_vol = fopen(csvvolFile, "w");
+    fp_bfsp = fopen(csvbfFile, "w");
 
     // wavヘッダを読み込み
 	if (readWavHead(ifp, &len, &fs, &chNum, &sampSize) < 0) {
@@ -162,31 +162,31 @@ void main(int argc, char *argv[]){
 		for (int j = 0; j < FRAMESIZE; j++) {
 			dDataOutX[j] = dDataInX[j];
 			dDataOutY[j] = dDataInY[j];
+            fprintf(fp_bfsp, "%d,%d\n", dataOutX[j], dataOutY[j]); 	    // 処理前のパワースペクトル
 		}
         // 対象の周波数を処理()
         for(int j = 0;j < FRAMESIZE; j++){
             if(j >= N1 && j < N2){
                 dDataOutX[j] = GAIN * dDataOutX[j];     // 波形処理
 			    dDataOutY[j] = GAIN * dDataOutY[j];
-                fprintf(fp_spect, "%lf\n", sqrt(pow(dDataOutX[j], 2) + pow(dDataOutY[j], 2)));  // PowSpect
+                fprintf(fp_spect, "%lf\n", sqrt(pow(dDataOutX[j], 2) + pow(dDataOutY[j], 2)));  // 処理後のパワースペクトル
             }else{
                 dDataOutX[j] = dDataInX[j];             // 処理が不要な信号なので何もしない
 			    dDataOutY[j] = dDataInY[j];
-                fprintf(fp_spect, "%lf\n", sqrt(pow(dDataOutX[j], 2) + pow(dDataOutY[j], 2)));  // PowSpect
+                fprintf(fp_spect, "%lf\n", sqrt(pow(dDataOutX[j], 2) + pow(dDataOutY[j], 2)));  // 処理後のパワースペクトル
             }
         }
 
 		CT_fft(dDataOutX, dDataOutY, FRAMESIZE, -1);    // IFFT(arg4 = -1)
 
 		for (int j = 0; j < FRAMESIZE; j++) {
-//			fprintf(fp_vol, "%lf,%lf\n", dDataOutX[j], dDataOutY[j]);   // 逆FFTの結果
+//			fprintf(fp_bfsp, "%lf,%lf\n", dDataOutX[j], dDataOutY[j]);   // 逆FFTの結果
 			dataOutX[j] = (short)dDataOutX[j];
 			dataOutY[j] = (short)dDataOutY[j];
-			fprintf(fp_vol, "%d,%d\n", dataOutX[j], dataOutY[j]); 	    // Vol
 		}
 
 		fprintf(fp_spect, "\n");
-        fprintf(fp_vol, "\n");
+        fprintf(fp_bfsp, "\n");
 
 		fwrite(dataOutX, sizeof(short), FRAMESIZE, ofp);    // dataOutXのみを書き出しているが、Yの扱いは場合による
 	}
@@ -195,5 +195,5 @@ void main(int argc, char *argv[]){
 	fclose(ofp);
     fclose(fp_info);
     fclose(fp_spect);
-    fclose(fp_vol);
+    fclose(fp_bfsp);
 }
