@@ -196,6 +196,4 @@ void main(int argc, char *argv[]){
     fclose(fp_info);
     fclose(fp_spect);
     fclose(fp_vol);
-
-    return 0;
 }
