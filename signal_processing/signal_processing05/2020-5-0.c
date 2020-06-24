@@ -77,20 +77,6 @@ void main(int argc, char* argv[])
 	*/
 	writeWavHead(ofp, outlen, fs, chNum, sampSize);
 
-	/* カットする周波数帯域を計算 */
-	double cut_Hz_N1 = 0, cut_Hz_N2 = 0;
-
-	printf("除去したい周波数帯域の最小値を入力[Hz]: ");
-	scanf("%lf", &cut_Hz_N1);
-	printf("除去したい周波数帯域の最大値を入力[Hz]: ");
-	scanf("%lf", &cut_Hz_N2);
-
-	N1 = cut_Hz_N1 / 375.0;
-	N2 = cut_Hz_N2 / 375.0;
-
-	printf("\n%lf[Hz]から%lf[Hz]を除去\n", cut_Hz_N1, cut_Hz_N2);
-	printf("操作対象の要素番号は[%d]から[%d]\n", N1, N2);
-
 	for (int i = 0; i < fNum; i++) {
 		fread(dataIn, sizeof(short), FRAMESIZE, ifp);
 
