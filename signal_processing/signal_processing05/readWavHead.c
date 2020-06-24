@@ -4,6 +4,7 @@ RIFF-Wavのヘッダを読み込む
  */
 
 #include <stdio.h>
+#include<stdlib.h>
 
 #include "wav.h"
 
@@ -21,7 +22,7 @@ int readWavHead(FILE *fp, int *dataLength, unsigned long *fs, unsigned short  *c
   fread(&ckHead, sizeof(ckHead), 1, fp);
   if(ckHead.ckID != RIFF){
     puts("This is not riff file.");
-    exit(-1);
+    exit(0);
   }
   fileSize = ckHead.ckSize + 8;
 //  printf("read lenght %d byte\n", fileSize);
@@ -30,7 +31,7 @@ int readWavHead(FILE *fp, int *dataLength, unsigned long *fs, unsigned short  *c
   fread(&iD, sizeof(ID), 1, fp);
   if(iD != WAVE){
     puts("This is not riff-wave file.");
-    exit(-1);
+    exit(0);
   }
 
 /*   次のChunkのIDとサイズを読む */
@@ -56,11 +57,11 @@ int readWavHead(FILE *fp, int *dataLength, unsigned long *fs, unsigned short  *c
 //      printf("%d bit per sample\n", *sampSize);
     }else{
       puts("not PCM");
-      exit(-1);
+      exit(0);
     }
   }else{
     puts("Cannot search Format Field.");
-    exit(-1);
+    exit(0);
   }
 
 /*   続けてヘッダを読む ID がdataになるまでスキップ */
