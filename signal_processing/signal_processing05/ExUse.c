@@ -43,7 +43,6 @@ void main(int argc, char *argv[]){
     double GAIN;
     double cutOff;
     int cutHz, cutHzL1, cutHzL2;
-    int cut_Hz_N1, cut_Hz_N2;
     int N1, N2;
 
     // コマンドライン引数を確認
