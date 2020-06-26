@@ -15,6 +15,7 @@ Coding 'Shift JIS'
 #include<stdlib.h>
 #include<math.h>
 #include<string.h>
+#include<time.h>
 
 // prototype宣言
 int readWavHead(FILE* fp, int* dataLength, unsigned long* fs, unsigned short* chNum, int* sampSize);
@@ -44,6 +45,8 @@ void main(int argc, char *argv[]){
     double cutOff;
     int cutHz, cutHzL1, cutHzL2;
     int N1, N2;
+
+    clock_t start, end;
 
     // コマンドライン引数を確認
     if(argc < 2){
@@ -115,6 +118,9 @@ void main(int argc, char *argv[]){
     scanf("%d", &cutHzL1);
     printf("除去したい周波数帯域の最大値を入力[Hz]{(-1)で最大周波数まで選択}: ");
     scanf("%d", &cutHzL2);
+
+    // ここから測定を開始
+    start = clock();
 
     // 処理領域を計算
     cutOff = cutHzL1 * (FRAMESIZE / (double)fs);
@@ -194,6 +200,10 @@ void main(int argc, char *argv[]){
 
 		fwrite(dataOutX, sizeof(short), FRAMESIZE, ofp);    // dataOutXのみを書き出しているが、Yの扱いは場合による
 	}
+
+    // 測定終了
+    end = clock();
+    fprintf(fp_info, "実行時間:%.2f(s)\n");
 
 	fclose(ifp);
 	fclose(ofp);
