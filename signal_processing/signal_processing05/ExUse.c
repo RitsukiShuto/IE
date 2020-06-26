@@ -203,7 +203,7 @@ void main(int argc, char *argv[]){
 
     // 測定終了
     end = clock();
-    printf(fp_info, "実行時間:%.2f(s)\n", (double)(end - start) / CLOCKS_PER_SEC);
+    printf("実行時間:%.2f(s)\n", (double)(end - start) / CLOCKS_PER_SEC);
     fprintf(fp_info, "実行時間:%.2f(s)\n", (double)(end - start) / CLOCKS_PER_SEC);
 
 	fclose(ifp);
