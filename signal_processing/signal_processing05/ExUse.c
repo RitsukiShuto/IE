@@ -177,12 +177,12 @@ void main(int argc, char *argv[]){
         // 対象の周波数を処理()
         for(int j = 0;j < FRAMESIZE; j++){
             if(j >= N1 && j < N2){
-                dDataOutX[j] = GAIN * dDataOutX[j];     // 波形処理
+                dDataOutX[j] = GAIN * dDataOutX[j];     // 信号処理
 			    dDataOutY[j] = GAIN * dDataOutY[j];
                 fprintf(fp_spect, "%lf\n", sqrt(pow(dDataOutX[j], 2) + pow(dDataOutY[j], 2)));  // 処理後のパワースペクトル
             }else{
-                dDataOutX[j] = dDataInX[j];             // 処理が不要な信号なので何もしない
-			    dDataOutY[j] = dDataInY[j];
+                dDataOutX[j] = dDataOutX[j];             // 処理が不要な信号なので何もしない
+			    dDataOutY[j] = dDataOutY[j];
                 fprintf(fp_spect, "%lf\n", sqrt(pow(dDataOutX[j], 2) + pow(dDataOutY[j], 2)));  // 処理後のパワースペクトル
             }
         }
@@ -196,6 +196,7 @@ void main(int argc, char *argv[]){
 		}
 
 		fprintf(fp_spect, "\n");
+        
         fprintf(fp_bfsp, "\n");
 
 		fwrite(dataOutX, sizeof(short), FRAMESIZE, ofp);    // dataOutXのみを書き出しているが、Yの扱いは場合による
@@ -204,7 +205,7 @@ void main(int argc, char *argv[]){
     // 測定終了
     end = clock();
     printf("実行時間:%.2f(s)\n", (double)(end - start) / CLOCKS_PER_SEC);
-    fprintf(fp_info, "実行時間:%.2f(s)\n", (double)(end - start) / CLOCKS_PER_SEC);
+    fprintf(fp_info, "実行時間:%.2f(s)\n", (double)(end - start) / CLOCKS_PER_SEC);     // infoに書き込み
 
 	fclose(ifp);
 	fclose(ofp);
