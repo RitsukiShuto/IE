@@ -15,7 +15,7 @@ by mokam@cis
 #include<stdio.h>
 #include<math.h>
 
-#define FRAMESIZE 128
+#define FRAMESIZE 4096
 
 /*‚±‚¤‚¢‚¤ŠÖ”‚ğg‚¤‚æA‚Æ‚¢‚¤éŒ¾*/
 int readWavHead(FILE* fp, int* dataLength, unsigned long* fs, unsigned short* chNum, int* sampSize);
